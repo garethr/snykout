@@ -206,4 +206,4 @@ chmod +x snykout
 
 ## Known issues
 
-`snykout` is experimental, and will definiitely have bugs at this stage. In particular anything that outputs multiple results is not yet handled, for instance `--all-projects`.
+`snykout` is experimental, and will definitely have bugs at this stage. In particular anything that outputs multiple results is not yet handled, for instance `--all-projects`.
