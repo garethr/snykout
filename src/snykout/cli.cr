@@ -204,7 +204,7 @@ module SnykOut::CLI
           output = output + "\n\n" + render_table("Base image vulnerabilities from #{result.base_image.colorize.bright}", result.vulnerabilities.select { |vuln| vuln.source? }, options.bool["markdown"], options.bool["wide"]) if result.base_image
         end
 
-        if options.string["output"].empty?
+        if options.string["output"] == "stdout"
           puts output
         else
           begin
@@ -257,7 +257,7 @@ module SnykOut::CLI
         flag.name = "output"
         flag.short = "-o"
         flag.long = "--output FILE"
-        flag.default = ""
+        flag.default = "stdout"
         flag.description = "Output results as JSON"
       end
     end
