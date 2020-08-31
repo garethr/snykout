@@ -123,7 +123,7 @@ module SnykOut::CLI
   def vulnerability_table(message, data)
     row_data = data.map { |vuln| [vuln.name, Vulnerability.color(vuln.severity), vuln.cve_or_id, vuln.title, vuln.version, vuln.fixed_in] }
 
-    table = Tallboy.table do
+    Tallboy.table do
       columns do
         add "Package"
         add "Severity"
@@ -143,7 +143,7 @@ module SnykOut::CLI
       [vuln.name, Vulnerability.color(vuln.severity), vuln.cve_or_id, vuln.title, vuln.version, vuln.fixed_in, vuln.cvss_score, vuln.cvss, vuln.cwe_list(vuln.cwe)]
     }
 
-    table = Tallboy.table do
+    Tallboy.table do
       columns do
         add "Package"
         add "Severity"
@@ -161,7 +161,7 @@ module SnykOut::CLI
     end
   end
 
-  def config
+  def config # ameba:disable Metrics/CyclomaticComplexity
     Commander::Command.new do |cmd|
       cmd.use = "snykout"
       cmd.long = "Show vulnerability information from Snyk test output"
