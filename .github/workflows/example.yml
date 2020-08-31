@@ -20,7 +20,8 @@ jobs:
       continue-on-error: true
       with:
         input: fixtures/example.json
-        args: --json -o snykout.json
+        args: --json
+        output: snykout.json
     - uses: actions/upload-artifact@v2
       with:
         name: SnykOut JSON output
