@@ -19,6 +19,6 @@ runs:
   image: "Dockerfile"
   args:
   - ${{ inputs.input }}
-  - ${{ inputs.args }}
+  #- ${{ inputs.args }}
   #- -o
   #- ${{ inputs.output }}
