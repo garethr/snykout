@@ -65,7 +65,7 @@ class Vulnerability
   end
 
   def cwe_list(cwes : (Array(String) | Nil))
-      cwes ? cwes.join(",") : nil
+    cwes ? cwes.join(",") : nil
   end
 
   def source?
@@ -114,11 +114,11 @@ end
 module SnykOut::CLI
   extend self
 
-  def render_table(message, data, wide)
+  def render_table(message, data, markdown, wide)
     filtered_data = data.uniq { |vuln| vuln.id }.sort_by { |vuln| {vuln.sort_index, vuln.name} }
     table = wide ? wide_vulnerability_table(message, filtered_data) : vulnerability_table(message, filtered_data)
     puts
-    puts table.render
+    puts markdown ? table.render(:markdown) : table.render(:ascii)
   end
 
   def vulnerability_table(message, data)
@@ -140,9 +140,9 @@ module SnykOut::CLI
   end
 
   def wide_vulnerability_table(message, data)
-      row_data = data.map { |vuln|
-          [vuln.name, Vulnerability.color(vuln.severity), vuln.cve_or_id, vuln.title, vuln.version, vuln.fixed_in, vuln.cvss_score, vuln.cvss, vuln.cwe_list(vuln.cwe)]
-      }
+    row_data = data.map { |vuln|
+      [vuln.name, Vulnerability.color(vuln.severity), vuln.cve_or_id, vuln.title, vuln.version, vuln.fixed_in, vuln.cvss_score, vuln.cvss, vuln.cwe_list(vuln.cwe)]
+    }
 
     table = Tallboy.table do
       columns do
@@ -168,17 +168,19 @@ module SnykOut::CLI
       cmd.long = "Show vulnerability information from Snyk test output"
 
       cmd.run do |options, arguments|
-
-        if arguments.size != 1
+        if arguments.empty?
+          puts cmd.help
+          exit 0
+        elsif arguments.size != 1
           puts "Must provide either a file name or - for stdin".colorize(:red)
           exit 2
         end
 
         begin
           input = arguments.first == "-" ? STDIN.gets_to_end : File.read(arguments.first)
-        rescue ex : File::Error 
-            puts ex.message.colorize(:red)
-            exit 2
+        rescue ex : File::Error
+          puts ex.message.colorize(:red)
+          exit 2
         end
 
         begin
@@ -199,8 +201,8 @@ module SnykOut::CLI
         elsif options.bool["yaml"]
           puts result.to_yaml
         else
-          render_table("Found #{result.unique_count} unique vulnerabiliies for #{result.project.colorize.bright}", result.vulnerabilities.select { |vuln| !vuln.source? }, options.bool["wide"])
-          render_table("Base image vulnerabilities from #{result.base_image.colorize.bright}", result.vulnerabilities.select { |vuln| vuln.source? }, options.bool["wide"]) if result.base_image
+          render_table("Found #{result.unique_count} unique vulnerabiliies for #{result.project.colorize.bright}", result.vulnerabilities.select { |vuln| !vuln.source? }, options.bool["markdown"], options.bool["wide"])
+          render_table("Base image vulnerabilities from #{result.base_image.colorize.bright}", result.vulnerabilities.select { |vuln| vuln.source? }, options.bool["markdown"], options.bool["wide"]) if result.base_image
         end
         result.ok ? exit 0 : exit 1
       end
@@ -224,6 +226,13 @@ module SnykOut::CLI
         flag.long = "--pretty"
         flag.default = false
         flag.description = "Make JSON results more human readable"
+      end
+
+      cmd.flags.add do |flag|
+        flag.name = "markdown"
+        flag.long = "--markdown"
+        flag.default = false
+        flag.description = "Output results as Markdown"
       end
 
       cmd.flags.add do |flag|
