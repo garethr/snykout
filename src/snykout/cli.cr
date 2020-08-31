@@ -165,12 +165,30 @@ module SnykOut::CLI
   def config
     Commander::Command.new do |cmd|
       cmd.use = "snykout"
-      cmd.long = "Show vulnerability information from Snyk test ooutput"
+      cmd.long = "Show vulnerability information from Snyk test output"
 
-      cmd.run do |options, _|
-        input = STDIN.gets_to_end
-        result = SnykResult.from_json(input)
-        json = JSON.parse(input)
+      cmd.run do |options, arguments|
+
+        if arguments.size != 1
+          puts "Must provide either a file name or - for stdin".colorize(:red)
+          exit 2
+        end
+
+        begin
+          input = arguments.first == "-" ? STDIN.gets_to_end : File.read(arguments.first)
+        rescue ex : File::Error 
+            puts ex.message.colorize(:red)
+            exit 2
+        end
+
+        begin
+          result = SnykResult.from_json(input)
+          json = JSON.parse(input)
+        rescue ex : JSON::ParseException
+          puts "#{arguments.first} contains invalid JSON".colorize(:red)
+          puts ex.message
+          exit 2
+        end
 
         result.project = json["projectName"].to_s.gsub("docker-image|", "")
         result.base_image = json["docker"]["baseImage"].to_s rescue KeyError
@@ -205,7 +223,7 @@ module SnykOut::CLI
         flag.name = "pretty"
         flag.long = "--pretty"
         flag.default = false
-        flag.description = "Make JSON more human readable"
+        flag.description = "Make JSON results more human readable"
       end
 
       cmd.flags.add do |flag|
