@@ -1,0 +1,24 @@
+name: "SnykOut"
+description: "Alternative outputs for Snyk data"
+author: "Gareth Rushgrove"
+branding:
+  icon: "alert-triangle"
+  color: "yellow"
+inputs:
+  input:
+    description: "Where to find the Snyk JSON file"
+    default: "snyk.json"
+  args:
+    description: "Additional arguments passed to snykout"
+    default: ""
+  output:
+    description: "Where to save the output file to"
+    default: "snykout.json"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+  - ${{ inputs.input }}
+  - ${{ inputs.args }}
+  #- -o
+  #- ${{ inputs.output }}
