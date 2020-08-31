@@ -170,9 +170,6 @@ module SnykOut::CLI
         if arguments.empty?
           puts cmd.help
           exit 0
-        elsif arguments.size != 1
-          puts "Must provide either a file name or - for stdin".colorize(:red)
-          exit 2
         end
 
         begin

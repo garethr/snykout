@@ -11,14 +11,9 @@ inputs:
   args:
     description: "Additional arguments passed to snykout"
     default: ""
-  output:
-    description: "Where to save the output file to"
-    default: "snykout.json"
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
   - ${{ inputs.input }}
-  #- ${{ inputs.args }}
-  #- -o
-  #- ${{ inputs.output }}
+  - ${{ inputs.args }}
