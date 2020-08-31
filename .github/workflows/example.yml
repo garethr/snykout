@@ -8,10 +8,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  demo:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: garethr/snykout/action@master
+      continue-on-error: true
       with:
         input: fixtures/example.json
+    - uses: garethr/snykout/action@master
+      continue-on-error: true
+      with:
+        input: fixtures/example.json
+        args: --json -o snyout.json
+    - uses: actions/upload-artifact@v2
+      with:
+        name: SnykOut JSON output
+        path: snykout.json
