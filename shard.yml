@@ -1,0 +1,29 @@
+name: snykout
+version: 0.1.0
+
+authors:
+  - Gareth Rushgrove <garethr@snyk.io>
+
+targets:
+  snykctl:
+    main: src/snykout.cr
+
+dependencies:
+  commander:
+    github: mrrooijen/commander
+    version: ~> 0.3.5
+  tallboy:
+    github: epoch/tallboy
+    branch: master
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.12.0
+  icr:
+    github: crystal-community/icr
+    branch: master
+
+crystal: 0.35.1
+
+license: Apache-2.0
