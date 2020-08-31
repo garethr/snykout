@@ -1,5 +1,7 @@
 # SnykOut
 
+![Test](https://github.com/garethr/snykout/workflows/Test/badge.svg)
+
 A command line tool which provides an alternative user interface to `snyk test` output.
 
 
@@ -115,6 +117,49 @@ As well as the standard table output, `snykout` also supports:
 * `--markdown` which will output tables as Markdown which can be copied into documentation
 * As well as taking input on STDIN, `snykout` can also be pointed directly at a file, eg, `snykout fixtures/example.json`
 
+
+## Open Policy Agent
+
+`snykout` is also designed to work well with Open Policy Agent. This allows for writing arbitrary powerful policies against the resulting set of vulnerabilities. Take the following example which defines policies to catch cryptography issues.
+
+```rego
+package main
+
+deny[msg] {
+  issue = input.vulnerabilities[index]
+  issue.cwe[_] = "CWE-327"
+  issue.severity = "high"
+
+  msg = sprintf("High severity cryptography issue (CWE-327). package: %v", [issue.name])
+}
+
+warn[msg] {
+  issue = input.vulnerabilities[index]
+  issue.cwe[_] = "CWE-327"
+  issue.severity != "high"
+
+  msg = sprintf("Cryptography issue (CWE-327). package: %v severity: %v", [issue.name, issue.severity])
+}
+```
+
+You can use [Conftest](https://www.conftest.dev/) to run the policies.
+
+```console
+$ conftest test fixtures/snykout.json
+WARN - fixtures/snykout.json - Cryptography issue (CWE-327). package: gnupg2/gpgv severity: low
+WARN - fixtures/snykout.json - Cryptography issue (CWE-327). package: gnutls28/libgnutls30 severity: low
+FAIL - fixtures/snykout.json - High severity issue found. package: perl/perl-base issue: Integer Overflow or Wraparound
+FAIL - fixtures/snykout.json - High severity issue found. package: sqlite3/libsqlite3-0 issue: Out-of-bounds Read
+FAIL - fixtures/snykout.json - High severity issue found. package: sqlite3 issue: Out-of-bounds Read
+
+5 tests, 0 passed, 2 warnings, 3 failures, 0 exceptions
+```
+
+You can do everything in one line as well if you prefer.
+
+```console
+$ snyk container test garethr/snykit --json | snykout - --json | conftest test -
+```
 
 ## Usage
 
