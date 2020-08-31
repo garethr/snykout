@@ -122,7 +122,7 @@ You can see usage instructions for `snykout` from the inline help:
 
 ```console
 $ snykout
-snykout - Show vulnerability information from Snyk test output
+  snykout - Show vulnerability information from Snyk test output
 
   Usage:
     snykout [flags] [arguments]
@@ -131,12 +131,13 @@ snykout - Show vulnerability information from Snyk test output
     help [command]  Help about any command.
 
   Flags:
-    -h, --help      Help for this command.
-        --json      Output results as JSON
-        --markdown  Output results as Markdown
-        --pretty    Make JSON results more human readable
-        --wide      Output additional information in the table
-        --yaml      Output results as YAM
+    -h, --help         Help for this command.
+        --json         Output results as JSON
+        --markdown     Output results as Markdown
+    -o, --output FILE  Output results as JSON
+        --pretty       Make JSON results more human readable
+        --wide         Output additional information in the table
+        --yaml         Output results as YAML
 ```
 
 

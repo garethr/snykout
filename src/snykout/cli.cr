@@ -117,8 +117,7 @@ module SnykOut::CLI
   def render_table(message, data, markdown, wide)
     filtered_data = data.uniq { |vuln| vuln.id }.sort_by { |vuln| {vuln.sort_index, vuln.name} }
     table = wide ? wide_vulnerability_table(message, filtered_data) : vulnerability_table(message, filtered_data)
-    puts
-    puts markdown ? table.render(:markdown) : table.render(:ascii)
+    markdown ? table.render(:markdown).to_s : table.render(:ascii).to_s
   end
 
   def vulnerability_table(message, data)
@@ -196,14 +195,29 @@ module SnykOut::CLI
         result.base_image = json["docker"]["baseImage"].to_s rescue KeyError
         result.vulnerabilities.each { |vuln| vuln.add_properties!(json["packageManager"].as_s) }
 
+        output = "test"
+
         if options.bool["json"]
-          puts options.bool["pretty"] ? result.to_pretty_json : result.to_json
+          output = options.bool["pretty"] ? result.to_pretty_json : result.to_json
         elsif options.bool["yaml"]
-          puts result.to_yaml
+          output = result.to_yaml
         else
-          render_table("Found #{result.unique_count} unique vulnerabiliies for #{result.project.colorize.bright}", result.vulnerabilities.select { |vuln| !vuln.source? }, options.bool["markdown"], options.bool["wide"])
-          render_table("Base image vulnerabilities from #{result.base_image.colorize.bright}", result.vulnerabilities.select { |vuln| vuln.source? }, options.bool["markdown"], options.bool["wide"]) if result.base_image
+          output = render_table("Found #{result.unique_count} unique vulnerabiliies for #{result.project.colorize.bright}", result.vulnerabilities.select { |vuln| !vuln.source? }, options.bool["markdown"], options.bool["wide"])
+
+          output = output + "\n\n" + render_table("Base image vulnerabilities from #{result.base_image.colorize.bright}", result.vulnerabilities.select { |vuln| vuln.source? }, options.bool["markdown"], options.bool["wide"]) if result.base_image
         end
+
+        if options.string["output"].empty?
+          puts output
+        else
+          begin
+            File.write(options.string["output"], output.to_s)
+          rescue ex : File::Error
+            puts ex.message.colorize(:red)
+            exit 2
+          end
+        end
+
         result.ok ? exit 0 : exit 1
       end
 
@@ -240,6 +254,14 @@ module SnykOut::CLI
         flag.long = "--wide"
         flag.default = false
         flag.description = "Output additional information in the table"
+      end
+
+      cmd.flags.add do |flag|
+        flag.name = "output"
+        flag.short = "-o"
+        flag.long = "--output FILE"
+        flag.default = ""
+        flag.description = "Output results as JSON"
       end
     end
   end
