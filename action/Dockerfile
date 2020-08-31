@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /
 
-RUN wget -O /snykout https://github.com/garethr/snykout/releases/download/v0.2.0/snykout_v0.2.0_linux-amd64 \
+RUN wget -O /snykout https://github.com/garethr/snykout/releases/download/v0.2.1/snykout_v0.2.1_linux-amd64 \
     && chmod +x /snykout
 
 ENTRYPOINT ["/snykout"]
