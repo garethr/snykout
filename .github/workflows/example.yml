@@ -1,4 +1,4 @@
-name: SnykOut example
+name: Example
 
 on:
   push:
