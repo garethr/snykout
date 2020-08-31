@@ -8,6 +8,9 @@ inputs:
   input:
     description: "Where to find the Snyk JSON file"
     default: "snyk.json"
+  output:
+    description: "where to send the output"
+    default: "stdout"
   args:
     description: "Additional arguments passed to snykout"
     default: ""
@@ -17,3 +20,5 @@ runs:
   args:
   - ${{ inputs.input }}
   - ${{ inputs.args }}
+  - -o
+  - ${{ inputs.output }}
