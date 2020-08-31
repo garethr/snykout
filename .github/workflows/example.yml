@@ -24,7 +24,8 @@ jobs:
         output: snykout.json
     - uses: actions/upload-artifact@v2
       with:
+        name: snykout.json
         path: snykout.json
     - uses: instrumenta/conftest-action@master
       with:
-        files: snykout.yaml
+        files: snykout.json
