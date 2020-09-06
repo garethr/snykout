@@ -112,39 +112,19 @@ module SnykOut::CLI
         result.ok ? exit 0 : exit 1
       end
 
-      cmd.flags.add do |flag|
-        flag.name = "json"
-        flag.long = "--json"
-        flag.default = false
-        flag.description = "Output results as JSON"
-      end
-
-      cmd.flags.add do |flag|
-        flag.name = "yaml"
-        flag.long = "--yaml"
-        flag.default = false
-        flag.description = "Output results as YAML"
-      end
-
-      cmd.flags.add do |flag|
-        flag.name = "pretty"
-        flag.long = "--pretty"
-        flag.default = false
-        flag.description = "Make JSON results more human readable"
-      end
-
-      cmd.flags.add do |flag|
-        flag.name = "markdown"
-        flag.long = "--markdown"
-        flag.default = false
-        flag.description = "Output results as Markdown"
-      end
-
-      cmd.flags.add do |flag|
-        flag.name = "wide"
-        flag.long = "--wide"
-        flag.default = false
-        flag.description = "Output additional information in the table"
+      [
+        {"json", "Output results as JSON"},
+        {"yaml", "Output results as YAML"},
+        {"pretty", "Make JSON results more human readable"},
+        {"markdown", "Output results as markdown"},
+        {"wide", "Output additional information"},
+      ].each do |name, description|
+          cmd.flags.add do |flag|
+            flag.name = name
+            flag.long = "--#{name}"
+            flag.default = false
+            flag.description = description
+          end
       end
 
       cmd.flags.add do |flag|
