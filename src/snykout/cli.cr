@@ -1,5 +1,3 @@
-require "json"
-require "yaml"
 require "colorize"
 
 require "commander"
