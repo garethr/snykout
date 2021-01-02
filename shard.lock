@@ -10,7 +10,7 @@ shards:
 
   icr:
     git: https://github.com/crystal-community/icr.git
-    version: 0.7.0+git.commit.7da354f5c0a356aee77e68fc63c87e2ad35da7fb
+    version: 0.8.0+git.commit.8c57cd7c1fdf8088cb05c1587bd6c40d244a8a80
 
   readline:
     git: https://github.com/crystal-lang/crystal-readline.git

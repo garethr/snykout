@@ -13,7 +13,7 @@ A command line tool which provides an alternative user interface to `snyk test` 
 The basic output consists of a table of vulnerabilities.
 
 ```console
-$ snyk container test garethr/snykit --json | snykout
+$ snyk container test garethr/snykit --json | snykout -
 
 +--------------------------------------------------------------------------------------------------------------------------------+
 | Found 82 unique vulnerabiliies for garethr/snykit                                                                              |
