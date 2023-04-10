@@ -73,19 +73,23 @@ module Snyk
       @title
     end
 
+
     def self.color(string : String)
+      orange = Colorize::Color256.new(208)
       string.upcase.colorize({
-        "low":    :green,
-        "medium": :yellow,
-        "high":   :red,
+        "low":      :green,
+        "medium":   :yellow,
+        "high":     orange,
+        "critical": :red,
       }.fetch(string, :default)).to_s
     end
 
     def sort_index
       {
-        "low":    3,
-        "medium": 2,
-        "high":   1,
+        "low":      4,
+        "medium":   3,
+        "high":     2,
+        "critical": 1,
       }.fetch(@severity, 4)
     end
   end
